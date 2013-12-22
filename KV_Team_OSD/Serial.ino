@@ -396,7 +396,7 @@ void handleRawRC() {
 	}
 
 	if(configPage == 4 && COL == 3) {
-	  if(ROW==3) rssiTimer=15;
+	  if(ROW==3) rssiTimer=CALIBRATION_DELAY;
 	  if(ROW==4) Settings[S_RSSIMAX]=rssiADC;  // set MAX RSSI signal received (tx ON and rx near to tx)
 	  if(ROW==5) Settings[S_DISPLAYRSSI]=!Settings[S_DISPLAYRSSI];
 	}
@@ -472,7 +472,7 @@ void handleRawRC() {
 	}
 
 	if(configPage == 4 && COL == 3) {
-	  if(ROW==3) rssiTimer=15;
+	  if(ROW==3) rssiTimer=CALIBRATION_DELAY;
 	  if(ROW==4) Settings[S_RSSIMAX]=rssiADC;  // set MAX RSSI signal received (tx ON and rx near to tx)
 	  if(ROW==5) Settings[S_DISPLAYRSSI]=!Settings[S_DISPLAYRSSI];
 	}

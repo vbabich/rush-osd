@@ -157,13 +157,13 @@ void loop()
     if (!Settings[S_VIDVOLTAGE_VBAT]) {
       vidvoltage = float(analogRead(vidvoltagePin)) * Settings[S_VIDDIVIDERRATIO] * (1.1/102.3/4);
     }
-    if (!Settings[S_MWRSSI]) {
+    if (!Settings[S_MWRSSI] && !Settings[S_PWMRSSI]) {
       rssiADC = (analogRead(rssiPin)*1.1*100)/1023;  // RSSI Readings, result in mV/10 (example 1.1V=1100mV=110 mV/10)
     }
     amperage = (AMPRERAGE_OFFSET - (analogRead(amperagePin)*AMPERAGE_CAL))/10.23;
   }
   if (Settings[S_MWRSSI]) {
-      rssiADC = MwRssi;
+      rssiADC = MwRssi >> 2; // adjust MSP range (0..1023) to (0..255)
   } 
    if (Settings[S_PWMRSSI]){
    rssiADC = pulseIn(PwmRssiPin, HIGH);     
@@ -250,7 +250,7 @@ void loop()
       blankserialRequest(MSPcmdsend);      
 
     MAX7456_DrawScreen();
-    if( allSec < 10 ){
+    if( allSec < INTRO_DELAY ){
       displayIntro();
       lastCallSign = onTime;
     }  
@@ -350,31 +350,33 @@ void loop()
       setMspRequests();
     }
     allSec++;
+    
+    if(configMode){
+      if( accCalibrationTimer==1 ) {
+        blankserialRequest(MSP_ACC_CALIBRATION);
+        accCalibrationTimer=0;
+      }
+  
+      if( magCalibrationTimer==1 ) {
+        blankserialRequest(MSP_MAG_CALIBRATION);
+        magCalibrationTimer=0;
+      }
+  
+      if( eepromWriteTimer==1 ) {
+        blankserialRequest(MSP_EEPROM_WRITE);
+        eepromWriteTimer=0;
+      }
+  
+      if( rssiTimer==1 ) {
+        Settings[S_RSSIMIN]=rssiADC;  // set MIN RSSI signal received (tx off?)
+        rssiTimer=0;
+      }
 
-    if((accCalibrationTimer==1)&&(configMode)) {
-      blankserialRequest(MSP_ACC_CALIBRATION);
-      accCalibrationTimer=0;
+      if(accCalibrationTimer>0) accCalibrationTimer--;
+      if(magCalibrationTimer>0) magCalibrationTimer--;
+      if(eepromWriteTimer>0) eepromWriteTimer--;
+      if(rssiTimer>0) rssiTimer--;    
     }
-
-    if((magCalibrationTimer==1)&&(configMode)) {
-      blankserialRequest(MSP_MAG_CALIBRATION);
-      magCalibrationTimer=0;
-    }
-
-    if((eepromWriteTimer==1)&&(configMode)) {
-      blankserialRequest(MSP_EEPROM_WRITE);
-      eepromWriteTimer=0;
-    }
-
-    if(accCalibrationTimer>0) accCalibrationTimer--;
-    if(magCalibrationTimer>0) magCalibrationTimer--;
-    if(eepromWriteTimer>0) eepromWriteTimer--;
-
-    if((rssiTimer==1)&&(configMode)) {
-      Settings[S_RSSIMIN]=rssiADC;  // set MIN RSSI signal received (tx off?)
-      rssiTimer=0;
-    }
-    if(rssiTimer>0) rssiTimer--;
   }
 
   serialMSPreceive();
@@ -395,26 +397,21 @@ void calculateTrip(void)
 
 void calculateRssi(void)
 {
-  float aa=0;
- 
- if (Settings[S_PWMRSSI]){
-     //Digital read Pin
-   aa = pulseIn(PwmRssiPin, HIGH);
-   aa = ((aa-Settings[S_RSSIMIN]) *101)/((Settings[S_RSSIMAX]*4)-Settings[S_RSSIMIN]) ;
- }
-  else { 
-      if (Settings[S_MWRSSI]) {
-        aa =  MwRssi;
-      }
-      else {
-        aa=rssiADC;  // actual RSSI analogic signal received
-      }
-  aa = ((aa-Settings[S_RSSIMIN]) *101)/(Settings[S_RSSIMAX]*4-Settings[S_RSSIMIN]) ;  // Percentage of signal strength
-  rssi_Int += ( ( (signed int)((aa*rssiSample) - rssi_Int )) / rssiSample );  // Smoothing the readings
-  rssi = rssi_Int / rssiSample ;
+  float aa = rssiADC; // read in loop()
+
+  aa = ((aa - Settings[S_RSSIMIN]) * 101) / (Settings[S_RSSIMAX] - Settings[S_RSSIMIN]) ;  // Percentage of signal strength
+  
+  if(!Settings[S_MWRSSI] && !Settings[S_PWMRSSI]) {
+    rssi_Int += ( ( (signed int)((aa*rssiSample) - rssi_Int )) / rssiSample );  // Smoothing the readings
+    rssi = rssi_Int / rssiSample ;
+  }
+  else {
+    // No smoothing if it's MWRSSI or PWMRSSI
+    rssi = (int) aa;
+  }
+
   if(rssi<0) rssi=0;
   if(rssi>100) rssi=100;
-  }
 }
 
 void writeEEPROM(void)
