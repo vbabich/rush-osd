@@ -100,6 +100,7 @@ void serialMSPCheck()
     I2CError=read16();
     MwSensorPresent = read16();
     MwSensorActive = read32();
+    MwCurrentSet = read8();
     armed = (MwSensorActive & mode_armed) != 0;
   }
 
@@ -314,12 +315,15 @@ void handleRawRC() {
   {
     if((MwRcData[PITCHSTICK]>MAXSTICK)&&(MwRcData[YAWSTICK]>MAXSTICK)&&(MwRcData[THROTTLESTICK]>MINSTICK)&&!configMode&&(allSec>5)&&!armed)
     {
-      // Enter config mode using stick comvination
+      // Enter config mode using stick combination
       waitStick =  2;	// Sticks must return to center before continue!
       configMode = 1;
+      ConfigCurrentSet = MwCurrentSet; // store live CurrentSet value in the config var
+      
       setMspRequests();
     }
     else if(configMode) {
+      
       if(previousarmedstatus&&(MwRcData[THROTTLESTICK]>MINSTICK))
       {
 	// EXIT from SHOW STATISTICS AFTER DISARM (push throttle up)
@@ -428,6 +432,11 @@ void handleRawRC() {
 	    }
 	}
 
+        if(configPage == 9 && COL == 3) {
+          if(ROW==1 && ConfigCurrentSet > 0)
+            ConfigCurrentSet--;
+        }
+
 	if((ROW==10)&&(COL==3)) configPage--;
 	if(configPage<MINPAGE) configPage = MAXPAGE;
 	if((ROW==10)&&(COL==1)) configExit();
@@ -503,6 +512,11 @@ void handleRawRC() {
 	    MAX7456Setup();
 	    }
 	}
+
+        if(configPage == 9 && COL == 3) {
+          if(ROW==1 && ConfigCurrentSet < 2)
+            ConfigCurrentSet++;
+        }
 
 	if((ROW==10)&&(COL==3)) configPage++;
 	if(configPage>MAXPAGE) configPage = MINPAGE;
@@ -658,6 +672,27 @@ void saveExit()
   if (configPage==3 || configPage==4 || configPage==6 || configPage==7){
     writeEEPROM();
   }
+
+  if (configPage == 9) {
+    Serial.write('$');
+    Serial.write('M');
+    Serial.write('<');
+    txCheckSum=0;
+    txSize=1;
+    Serial.write(txSize);
+    txCheckSum ^= txSize;
+    Serial.write(MSP_SELECT_SETTING);
+    txCheckSum ^= MSP_SELECT_SETTING;
+    Serial.write(ConfigCurrentSet);
+    txCheckSum ^= ConfigCurrentSet;
+    Serial.write(txCheckSum);
+
+
+    // Reload PIDs at this point ?  select profile => load pids => edit => save ...
+
+
+  }
+
   configExit();
 }
 

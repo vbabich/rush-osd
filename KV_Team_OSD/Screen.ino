@@ -634,6 +634,15 @@ void displayCursor(void)
     if(configPage==8){
       ROW=10;
       }
+    
+    if(configPage == 9){
+      COL = 3;
+      if (ROW == 9)
+        ROW = 1;
+      if (ROW == 2)
+        ROW = 10;
+      cursorpos = (ROW+2)*30+10+6+6;
+    }
   }
   if(Blink10hz)
     screen[cursorpos] = SYM_CURSOR;
@@ -955,7 +964,14 @@ void displayConfigScreen(void)
 
     MAX7456_WriteString_P(configMsg87, MAGT);
     MAX7456_WriteString(itoa(temperMAX,screenBuffer,10),MAGD-3);
-    }
+  }
+   
+  if(configPage==9)
+  {
+    MAX7456_WriteString_P(configMsg90, 38);
+    MAX7456_WriteString_P(configMsg91, ROLLT);
+    MAX7456_WriteString(itoa(ConfigCurrentSet,screenBuffer,10),ROLLD);
+  }
     
   displayCursor();
 }

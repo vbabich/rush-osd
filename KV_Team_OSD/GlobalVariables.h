@@ -188,6 +188,8 @@ static uint16_t MwRcData[8]={   // This hold receiver pulse signal
 
 uint16_t  MwSensorPresent=0;
 uint32_t  MwSensorActive=0;
+uint8_t MwCurrentSet = 0;
+uint8_t ConfigCurrentSet = 0;
 uint8_t MwVersion=0;
 uint8_t MwVBat=0;
 int16_t MwVario=0;
@@ -310,7 +312,7 @@ const char armed_text[] PROGMEM = " ARMED";
 
 
 // For Intro
-const char message0[] PROGMEM = "KV_OSD_TEAM_R370";
+const char message0[] PROGMEM = "KV_OSD_TEAM_R372";
 const char message1[] PROGMEM = "VIDEO SIGNAL NTSC";
 const char message2[] PROGMEM = "VIDEO SIGNAL PAL ";
 const char message5[] PROGMEM = "MW VERSION:";
@@ -328,7 +330,7 @@ const char configMsgPGS[] PROGMEM = "<PAGE>";
 
 // For Config pages
 //-----------------------------------------------------------Page1
-const char configMsg10[] PROGMEM = "1/8 PID CONFIG";
+const char configMsg10[] PROGMEM = "1/9 PID CONFIG";
 const char configMsg11[] PROGMEM = "ROLL";
 const char configMsg12[] PROGMEM = "PITCH";
 const char configMsg13[] PROGMEM = "YAW";
@@ -337,7 +339,7 @@ const char configMsg15[] PROGMEM = "GPS";
 const char configMsg16[] PROGMEM = "LEVEL";
 const char configMsg17[] PROGMEM = "MAG";
 //-----------------------------------------------------------Page2
-const char configMsg20[] PROGMEM = "2/8 RC TUNING";
+const char configMsg20[] PROGMEM = "2/9 RC TUNING";
 const char configMsg21[] PROGMEM = "RC RATE";
 const char configMsg22[] PROGMEM = "EXPONENTIAL";
 const char configMsg23[] PROGMEM = "ROLL PITCH RATE";
@@ -346,7 +348,7 @@ const char configMsg25[] PROGMEM = "THROTTLE PID ATT";
 const char configMsg26[] PROGMEM = "MWCYCLE TIME";
 const char configMsg27[] PROGMEM = "MWI2C ERRORS";
 //-----------------------------------------------------------Page3
-const char configMsg30[] PROGMEM = "3/8 SUPPLY & ALARM";
+const char configMsg30[] PROGMEM = "3/9 SUPPLY & ALARM";
 const char configMsg31[] PROGMEM = "DISPLAY VOLTAGE";
 const char configMsg32[] PROGMEM = "VOLTAGE ALARM";
 const char configMsg33[] PROGMEM = "DISPLAY VID BATT";
@@ -355,14 +357,14 @@ const char configMsg35[] PROGMEM = "SET TEMP ALARM";
 const char configMsg36[] PROGMEM = "CONSUMED MAH";
 const char configMsg37[] PROGMEM = "CURRENT A";
 //-----------------------------------------------------------Page4
-const char configMsg40[] PROGMEM = "4/8 RSSI";
+const char configMsg40[] PROGMEM = "4/9 RSSI";
 const char configMsg41[] PROGMEM = "ACTUAL RSSIADC";
 const char configMsg42[] PROGMEM = "ACTUAL RSSI";
 const char configMsg43[] PROGMEM = "SET RSSI MIN";
 const char configMsg44[] PROGMEM = "SET RSSI MAX";
 const char configMsg45[] PROGMEM = "DISPLAY RSSI";
 //-----------------------------------------------------------Page5
-const char configMsg50[] PROGMEM = "5/8 CALIBRATION";
+const char configMsg50[] PROGMEM = "5/9 CALIBRATION";
 const char configMsg51[] PROGMEM = "ACC CALIBRATION";
 const char configMsg52[] PROGMEM = "ACC ROLL";
 const char configMsg53[] PROGMEM = "ACC PITCH";
@@ -371,7 +373,7 @@ const char configMsg55[] PROGMEM = "MAG CALIBRATION";
 const char configMsg56[] PROGMEM = "HEADING";
 const char configMsg57[] PROGMEM = "MW EEPROM WRITE";
 //-----------------------------------------------------------Page6
-const char configMsg60[] PROGMEM = "6/8 GPS";
+const char configMsg60[] PROGMEM = "6/9 GPS";
 const char configMsg61[] PROGMEM = "DISPLAY GPS";
 const char configMsg62[] PROGMEM = "GPS COORDIN";
 const char configMsg63[] PROGMEM = "COORD ON TOP";
@@ -380,7 +382,7 @@ const char configMsg65[] PROGMEM = "ANGLE TO HOME";
 const char configMsg66[] PROGMEM = "DISPLAY HEADING";
 const char configMsg67[] PROGMEM = "DISPLAY MODE";
 //-----------------------------------------------------------Page7
-const char configMsg70[] PROGMEM = "7/8 ADV SETUP";
+const char configMsg70[] PROGMEM = "7/9 ADV SETUP";
 const char configMsg71[] PROGMEM = "CALLSIGN";
 const char configMsg72[] PROGMEM = "THROTTLE";
 const char configMsg73[] PROGMEM = "AH SIDE BAR";
@@ -391,7 +393,7 @@ const char configMsg77[] PROGMEM = "VIDEO SYSTEM";
 const char configMsg78[] PROGMEM = "NTSC";
 const char configMsg79[] PROGMEM = "PAL";
 //-----------------------------------------------------------Page8
-const char configMsg80[] PROGMEM = "8/8 STATISTICS";
+const char configMsg80[] PROGMEM = "8/9 STATISTICS";
 const char configMsg81[] PROGMEM = "TRIP";
 const char configMsg82[] PROGMEM = "MAX DISTANCE";
 const char configMsg83[] PROGMEM = "MAX ALTITUDE";
@@ -399,7 +401,9 @@ const char configMsg84[] PROGMEM = "MAX SPEED";
 const char configMsg85[] PROGMEM = "FLYING TIME";
 const char configMsg86[] PROGMEM = "AMPS DRAINED";
 const char configMsg87[] PROGMEM = "MAX TEMP";
-
+//-----------------------------------------------------------Page9
+const char configMsg90[] PROGMEM = "9/9 MISC";
+const char configMsg91[] PROGMEM = "PROFILE SET";
 
 // POSITION OF EACH CHARACTER OR LOGO IN THE MAX7456
 const unsigned char speedUnitAdd[2] ={
