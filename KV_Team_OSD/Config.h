@@ -15,7 +15,7 @@
 
 #define CALIBRATION_DELAY 10
 #define EEPROM_WRITE_DELAY 5
-#define INTRO_DELAY 5
+#define INTRO_DELAY 2
 
 /***************************************         Amperage        ********************************************/
 
