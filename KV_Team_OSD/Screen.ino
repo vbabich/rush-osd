@@ -1114,7 +1114,7 @@ configInput inputsPage1[] PROGMEM = {
   { 11 + 30*8, &P8[7] },
   { 17 + 30*8, &I8[7] },
   { 23 + 30*8, &D8[7] },
-  { 11 + 30*9, &P8[0] }
+  { 11 + 30*9, &P8[8] }
 };
 
 configInput inputsPage2[] PROGMEM = {
@@ -1138,8 +1138,8 @@ configInput inputsPage3[] PROGMEM = {
 };
 
 configInput inputsPage4[] PROGMEM = {
-  { 23 + 30*3, &rssiADC },
-  { 23 + 30*4, &rssi },
+  { 23 + 30*3, &rssiADC, &onchangeWord },
+  { 23 + 30*4, &rssi, &onchangeWord },  // should be a byte?
   { 18 + 30*5, &rssiTimer }, // special input - not selectable, maybe make it a label?
   { 23 + 30*5, &Settings[S_RSSIMIN] },
   { 23 + 30*6, &Settings[S_RSSIMAX] },
@@ -1148,9 +1148,9 @@ configInput inputsPage4[] PROGMEM = {
 
 configInput inputsPage5[] PROGMEM = {
   { 23 + 30*3, &accCalibrationTimer }, // print byte or "-" if zero
-  { 23 + 30*4, &MwAccSmooth[0] },
-  { 23 + 30*5, &MwAccSmooth[1] },
-  { 23 + 30*6, &MwAccSmooth[2] },
+  { 23 + 30*4, &MwAccSmooth[0], &onchangeWord },
+  { 23 + 30*5, &MwAccSmooth[1], &onchangeWord },
+  { 23 + 30*6, &MwAccSmooth[2], &onchangeWord },
   { 23 + 30*7, &magCalibrationTimer }, // print byte or "-" if zero
   { 23 + 30*8, &MwHeading },
   { 23 + 30*9, &eepromWriteTimer }     // print byte or "-" if zero
@@ -1270,7 +1270,29 @@ char *onchangeUnitType( void *v, char *b, int8_t delta ) {
 // Display cursor for current input
 
 void displayCursor( void ) {
-
+  uint16_t pos;
+  
+  
+  // debug - loop through the config screens
+  if( currentInput >= configScreens[configPage].inputsNum ) {
+    configPage++;
+    currentInput = 0;
+    if( configPage > MAXPAGE ) {
+      configPage = MINPAGE;
+    }
+  }
+  
+  
+  if( currentInput >= configScreens[configPage].inputsNum ) {
+    return;  // no inputs available on this page
+  }
+  
+  pos = pgm_read_word( &(configScreens[configPage].inputs[currentInput].pos) ) - 1; // input pos - 1
+  
+  if(Blink10hz) {
+    screen[pos] = SYM_CURSOR;
+  }
+  
 }
 
 void displayConfigScreen( void ) {
