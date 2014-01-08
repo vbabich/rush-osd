@@ -982,7 +982,7 @@ void displayConfigScreen(void)
 
 /* handler function type */
 
-typedef void *(*onchange_ptr)(void *v, char *b, int8_t delta);
+typedef char *(*onchange_ptr)(void *v, char *b, int8_t delta);
 
 struct configLabel {
   uint16_t pos;
@@ -1041,6 +1041,32 @@ configScreen configScreens[] = {
   { 9, 19, labelsPage1, inputsPage1 }
 };
 
+// input update/display callbacks
+
+char *onchangeByte( void *v, char *b, int8_t delta ) {
+  *(int8_t *)v += delta;
+  return itoa( *(int8_t *)v, b, 10 );
+}
+
+char *onchangeBoolean( void *v, char *b, int8_t delta ) {
+  char *msg;
+  if( delta != 0 ) {
+    *(boolean *)v = !*(boolean *)v;
+  }
+  
+  if( *(boolean *)v ) {
+    msg = (char *)configMsgON;
+  }
+  else {
+    msg = (char *)configMsgOFF;
+  }
+  
+  return strcpy_P( b, msg );
+}
+
+
+// Display cursor for current input
+
 void displayCursor( void ) {
 
 }
@@ -1065,6 +1091,8 @@ void displayConfigScreen( void ) {
   for( i = 0; i < configScreens[configPage].inputsNum; i++ ) {
     
     onchange = ( onchange_ptr )pgm_read_word( &(configScreens[configPage].inputs[i].onchange) );
+    v = (void *)pgm_read_word( &(configScreens[configPage].inputs[i].v) );
+    pos = (uint16_t)pgm_read_word( &(configScreens[configPage].inputs[i].pos) );
     
     // call onchange with delta
     if( currentInput == i ) {
@@ -1074,9 +1102,14 @@ void displayConfigScreen( void ) {
       delta = 0;
     }
     
-    //onchange( screen + pos, delta );
+    if( onchange != NULL ) {
+      onchange( v, screen + pos, delta );
+    }
+    else {
+      // by default, update/display the input as unsigned byte
+      onchangeByte( v, screen + pos, delta ); 
+    }
     
-    itoa( *(int8_t *)pgm_read_word( &(configScreens[configPage].inputs[i].v) ), screen + pgm_read_word( &(configScreens[configPage].inputs[i].pos) ), 10 );
   }
   
   displayCursor();
