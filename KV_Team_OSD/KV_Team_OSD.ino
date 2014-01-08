@@ -267,9 +267,10 @@ void loop()
         previousarmedstatus=1;
       }
       if(previousarmedstatus && !armed){
-        configPage=8;
-        ROW=10;
-        COL=1;
+        configPage = 7;
+        currentInput = 0; // TODO: should be last.. can't do right now
+        //ROW=10;
+        //COL=1;
         configMode=1;
         setMspRequests();
       }
@@ -331,7 +332,7 @@ void loop()
         }
         
         // tmp
-        displayConfigScreen();
+        // displayConfigScreen();
         
       }
     }
@@ -345,9 +346,9 @@ void loop()
   if(tenthSec >= 20)     // this execute 1 time a second
   {
     // debug - loop through the inputs on the config screen
-    currentInput++;
+    // currentInput++;
     // debug - test input updates
-    currentDelta = -5;
+    // currentDelta = -5;
     
     onTime++;
 

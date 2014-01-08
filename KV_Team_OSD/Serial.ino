@@ -335,6 +335,10 @@ void handleRawRC() {
 	waitStick = 2;
 	configExit();
       }
+      
+      // Right and Left cursor movement not implemented at the moment
+      
+      /*
       else if(configMode&&(MwRcData[ROLLSTICK]>MAXSTICK)) // MOVE RIGHT
       {
 	waitStick = 1;
@@ -347,25 +351,42 @@ void handleRawRC() {
 	COL--;
 	if(COL<1) COL=1;
       }
+      */
       else if(configMode&&(MwRcData[PITCHSTICK]>MAXSTICK)) // MOVE UP
       {
 	waitStick = 1;
-	ROW--;
+        cursorMoveUp();
+	/*
+        ROW--;
 	if(ROW<1)
 	  ROW=1;
+        */
       }
       else if(configMode&&(MwRcData[PITCHSTICK]<MINSTICK)) // MOVE DOWN
       {
 	waitStick = 1;
-	ROW++;
+        cursorMoveDown();
+	/*
+        ROW++;
 	if(ROW>10)
 	  ROW=10;
+        */
       }
+      else if(!previousarmedstatus&&configMode&&(MwRcData[YAWSTICK]<MINSTICK)) { // DECREASE
+        waitStick = 1;
+        currentDelta = -1; // TODO: delta proportional to stick value
+      }
+      else if(!previousarmedstatus&&configMode&&(MwRcData[YAWSTICK]>MAXSTICK)) { // INCREASE
+        waitStick = 1;
+        currentDelta = 1; // TODO: delta proportional to stick value
+      }
+      
+      /*
       else if(!previousarmedstatus&&configMode&&(MwRcData[YAWSTICK]<MINSTICK)) // DECREASE
       {
 	waitStick = 1;
 
-	if(configPage == 1) {
+        if(configPage == 1) {
 	  if(ROW >= 1 && ROW <= 5) {
 	    if(COL==1) P8[ROW-1]--;
 	    if(COL==2) I8[ROW-1]--;
@@ -436,6 +457,7 @@ void handleRawRC() {
           if(ROW==1 && ConfigCurrentSet > 0)
             ConfigCurrentSet--;
         }
+        
 
 	if((ROW==10)&&(COL==3)) configPage--;
 	if(configPage<MINPAGE) configPage = MAXPAGE;
@@ -523,6 +545,7 @@ void handleRawRC() {
 	if((ROW==10)&&(COL==1)) configExit();
 	if((ROW==10)&&(COL==2)) saveExit();
       }
+      */
     }
 
     if(waitStick == 1)
@@ -598,9 +621,11 @@ void serialMSPreceive()
 
 void configExit()
 {
-  configPage=1;
-  ROW=10;
-  COL=3;
+  configPage = MINPAGE;
+  currentInput = configScreens[configPage].inputsNum - 1; // set cursor to the last input - PAGE selector
+  
+  //ROW=10;
+  //COL=3;
   configMode=0;
   //waitStick=3;
   previousarmedstatus = 0;
@@ -620,7 +645,7 @@ void saveExit()
   uint8_t txCheckSum;
   uint8_t txSize;
 
-  if (configPage==1){
+  if (configPage==0){
     Serial.write('$');
     Serial.write('M');
     Serial.write('<');
@@ -641,7 +666,7 @@ void saveExit()
     Serial.write(txCheckSum);
   }
 
-  if (configPage==2){
+  if (configPage==1){
     Serial.write('$');
     Serial.write('M');
     Serial.write('<');
@@ -668,12 +693,13 @@ void saveExit()
     Serial.write(txCheckSum);
   }
 
-//  if (configPage==3 || configPage==4){
-  if (configPage==3 || configPage==4 || configPage==6 || configPage==7){
+  if (configPage==2 || configPage==3 || configPage==5 || configPage==6){
     writeEEPROM();
   }
+  
+  // configPage 7 == stats
 
-  if (configPage == 9) {
+  if (configPage == 8) {
     Serial.write('$');
     Serial.write('M');
     Serial.write('<');
