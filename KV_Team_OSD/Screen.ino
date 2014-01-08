@@ -982,7 +982,7 @@ void displayConfigScreen(void)
 
 /* handler function type */
 
-typedef char *(*onchange_ptr)(void *v, char *b, int8_t delta);
+typedef char *(*callback_ptr)(void *v, char *b, int8_t delta);
 
 struct configLabel {
   uint16_t pos;
@@ -992,7 +992,7 @@ struct configLabel {
 struct configInput {
   uint16_t pos;
   void *v;
-  onchange_ptr onchange;
+  callback_ptr callback;
 };
 
 struct configScreen {
@@ -1123,65 +1123,65 @@ configInput inputsPage2[] PROGMEM = {
   { 23 + 30*5, &rollPitchRate },
   { 23 + 30*6, &yawRate },
   { 23 + 30*7, &dynThrPID },
-  { 23 + 30*8, &cycleTime, &onchangeWord },
-  { 23 + 30*9, &I2CError, &onchangeWord }
+  { 23 + 30*8, &cycleTime, &callbackWord },
+  { 23 + 30*9, &I2CError, &callbackWord }
 };
 
 configInput inputsPage3[] PROGMEM = {
-  { 23 + 30*3, &Settings[S_DISPLAYVOLTAGE], &onchangeBoolean },
+  { 23 + 30*3, &Settings[S_DISPLAYVOLTAGE], &callbackBoolean },
   { 23 + 30*4, &Settings[S_VOLTAGEMIN] },
-  { 23 + 30*5, &Settings[S_VIDVOLTAGE], &onchangeBoolean },
-  { 23 + 30*6, &Settings[S_DISPLAYTEMPERATURE], &onchangeBoolean },
+  { 23 + 30*5, &Settings[S_VIDVOLTAGE], &callbackBoolean },
+  { 23 + 30*6, &Settings[S_DISPLAYTEMPERATURE], &callbackBoolean },
   { 23 + 30*7, &Settings[S_TEMPERATUREMAX] },
-  { 23 + 30*8, &Settings[S_AMPER_HOUR], &onchangeBoolean },
-  { 23 + 30*9, &Settings[S_AMPERAGE], &onchangeBoolean }
+  { 23 + 30*8, &Settings[S_AMPER_HOUR], &callbackBoolean },
+  { 23 + 30*9, &Settings[S_AMPERAGE], &callbackBoolean }
 };
 
 configInput inputsPage4[] PROGMEM = {
-  { 23 + 30*3, &rssiADC, &onchangeWord },
-  { 23 + 30*4, &rssi, &onchangeWord },  // should be a byte?
+  { 23 + 30*3, &rssiADC, &callbackWord },
+  { 23 + 30*4, &rssi, &callbackWord },  // should be a byte?
   { 18 + 30*5, &rssiTimer }, // special input - not selectable, maybe make it a label?
   { 23 + 30*5, &Settings[S_RSSIMIN] },
   { 23 + 30*6, &Settings[S_RSSIMAX] },
-  { 23 + 30*7, &Settings[S_DISPLAYRSSI], &onchangeBoolean }
+  { 23 + 30*7, &Settings[S_DISPLAYRSSI], &callbackBoolean }
 };
 
 configInput inputsPage5[] PROGMEM = {
   { 23 + 30*3, &accCalibrationTimer }, // print byte or "-" if zero
-  { 23 + 30*4, &MwAccSmooth[0], &onchangeWord },
-  { 23 + 30*5, &MwAccSmooth[1], &onchangeWord },
-  { 23 + 30*6, &MwAccSmooth[2], &onchangeWord },
+  { 23 + 30*4, &MwAccSmooth[0], &callbackWord },
+  { 23 + 30*5, &MwAccSmooth[1], &callbackWord },
+  { 23 + 30*6, &MwAccSmooth[2], &callbackWord },
   { 23 + 30*7, &magCalibrationTimer }, // print byte or "-" if zero
   { 23 + 30*8, &MwHeading },
   { 23 + 30*9, &eepromWriteTimer }     // print byte or "-" if zero
 };
 
 configInput inputsPage6[] PROGMEM = {
-  { 23 + 30*3, &Settings[S_DISPLAYGPS], &onchangeBoolean },
-  { 23 + 30*4, &Settings[S_COORDINATES], &onchangeBoolean },
-  { 23 + 30*5, &Settings[S_GPSCOORDTOP], &onchangeBoolean },
-  { 23 + 30*6, &Settings[S_GPSALTITUDE], &onchangeBoolean },
-  { 23 + 30*7, &Settings[S_ANGLETOHOME], &onchangeBoolean },
-  { 23 + 30*8, &Settings[S_SHOWHEADING], &onchangeBoolean },
-  { 23 + 30*9, &Settings[S_MODEICON], &onchangeBoolean }
+  { 23 + 30*3, &Settings[S_DISPLAYGPS], &callbackBoolean },
+  { 23 + 30*4, &Settings[S_COORDINATES], &callbackBoolean },
+  { 23 + 30*5, &Settings[S_GPSCOORDTOP], &callbackBoolean },
+  { 23 + 30*6, &Settings[S_GPSALTITUDE], &callbackBoolean },
+  { 23 + 30*7, &Settings[S_ANGLETOHOME], &callbackBoolean },
+  { 23 + 30*8, &Settings[S_SHOWHEADING], &callbackBoolean },
+  { 23 + 30*9, &Settings[S_MODEICON], &callbackBoolean }
 };
 
 configInput inputsPage7[] PROGMEM = {
   { 23 + 30*3, &Settings[S_DISPLAY_CS] },
   { 23 + 30*4, &Settings[S_THROTTLEPOSITION] },
-  { 23 + 30*5, &Settings[S_WITHDECORATION], &onchangeBoolean },
-  { 21 + 30*6, &Settings[S_UNITSYSTEM], &onchangeUnitType },
-  { 23 + 30*7, &Settings[S_VIDEOSIGNALTYPE], &onchangeVidType }
+  { 23 + 30*5, &Settings[S_WITHDECORATION], &callbackBoolean },
+  { 21 + 30*6, &Settings[S_UNITSYSTEM], &callbackUnitType },
+  { 23 + 30*7, &Settings[S_VIDEOSIGNALTYPE], &callbackVidType }
 };
 
-configInput inputsPage8[] PROGMEM = {
-  { 20 + 30*3, &trip },
-  { 20 + 30*4, &distanceMAX },
-  { 20 + 30*5, &altitudeMAX },
-  { 20 + 30*6, &speedMAX },
-  { 19 + 30*7, &flyingTime }, // formatTime(flyingTime, buf, 1)
-  { 20 + 30*8, &pMeterSum, &onchangeWord }, // calc pMeterSum / EST_PMSum
-  { 20 + 30*9, &temperMAX }
+configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..  convert to labels maybe?
+  { 20 + 30*3, &trip, &callbackWordRO }, // trip is float, original code is printing it with itoa TODO: check how it works.. 
+  { 20 + 30*4, &distanceMAX, &callbackWordRO },
+  { 20 + 30*5, &altitudeMAX, &callbackWordRO },
+  { 20 + 30*6, &speedMAX, &callbackWordRO },
+  { 19 + 30*7, &flyingTime, &callbackWordRO }, // formatTime(flyingTime, buf, 1)
+  { 20 + 30*8, &pMeterSum, &callbackPMeterRO }, // calc pMeterSum / EST_PMSum
+  { 20 + 30*9, &temperMAX, &callbackByteRO }
 };
 
 configInput inputsPage9[] PROGMEM = {
@@ -1202,17 +1202,25 @@ configScreen configScreens[] = {
 
 // input update/display callbacks
 
-char *onchangeByte( void *v, char *b, int8_t delta ) {
+char *callbackByte( void *v, char *b, int8_t delta ) {
   *(uint8_t *)v += delta;
   return itoa( *(uint8_t *)v, b, 10 );
 }
 
-char *onchangeWord( void *v, char *b, int8_t delta ) {
+char *callbackWord( void *v, char *b, int8_t delta ) {
   *(int16_t *)v += delta;
   return itoa( *(int16_t *)v, b, 10 );
 }
 
-char *onchangeBoolean( void *v, char *b, int8_t delta ) {
+char *callbackByteRO( void *v, char *b, int8_t delta ) { // read only input - ignore delta
+  return itoa( *(uint8_t *)v, b, 10 );
+}
+
+char *callbackWordRO( void *v, char *b, int8_t delta ) { // read only input - ignore delta
+  return itoa( *(int16_t *)v, b, 10 );
+}
+
+char *callbackBoolean( void *v, char *b, int8_t delta ) {
   char *msg;
   boolean x = *(boolean *)v;
   
@@ -1230,7 +1238,7 @@ char *onchangeBoolean( void *v, char *b, int8_t delta ) {
   return strcpy_P( b, msg );
 }
 
-char *onchangeVidType( void *v, char *b, int8_t delta ) {
+char *callbackVidType( void *v, char *b, int8_t delta ) {
   char *msg;
   boolean x = *(boolean *)v;
   
@@ -1248,7 +1256,7 @@ char *onchangeVidType( void *v, char *b, int8_t delta ) {
   return strcpy_P( b, msg );
 }
 
-char *onchangeUnitType( void *v, char *b, int8_t delta ) {
+char *callbackUnitType( void *v, char *b, int8_t delta ) {
   char *msg;
   boolean x = *(boolean *)v;
   
@@ -1265,6 +1273,15 @@ char *onchangeUnitType( void *v, char *b, int8_t delta ) {
   
   return strcpy_P( b, msg );
 }
+
+char *callbackPMeterRO( void *v, char *b, int8_t delta ) {
+  uint16_t p = 12345; // test value
+  
+  // calc p (pMeterSum / EST_PMSum) ;
+  
+  return itoa( p, b, 10 );
+}
+
 
 
 // Display cursor for current input
@@ -1301,7 +1318,7 @@ void displayConfigScreen( void ) {
   int8_t delta;
   
   uint16_t pos;
-  onchange_ptr onchange;
+  callback_ptr callback;
   void *v;
   
   
@@ -1314,11 +1331,11 @@ void displayConfigScreen( void ) {
   // display inputs for current config page
   for( i = 0; i < configScreens[configPage].inputsNum; i++ ) {
     
-    onchange = ( onchange_ptr )pgm_read_word( &(configScreens[configPage].inputs[i].onchange) );
+    callback = ( callback_ptr )pgm_read_word( &(configScreens[configPage].inputs[i].callback) );
     v = (void *)pgm_read_word( &(configScreens[configPage].inputs[i].v) );
     pos = (uint16_t)pgm_read_word( &(configScreens[configPage].inputs[i].pos) );
     
-    // call onchange with delta
+    // call callback with delta
     if( currentInput == i ) {
       delta = currentDelta;
     }
@@ -1326,12 +1343,12 @@ void displayConfigScreen( void ) {
       delta = 0;
     }
     
-    if( onchange != NULL ) {
-      onchange( v, screen + pos, delta );
+    if( callback != NULL ) {
+      callback( v, screen + pos, delta );
     }
     else {
       // by default, update/display the input as unsigned byte
-      onchangeByte( v, screen + pos, delta ); 
+      callbackByte( v, screen + pos, delta ); 
     }
     
   }
