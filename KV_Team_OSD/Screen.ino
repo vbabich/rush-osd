@@ -1027,7 +1027,7 @@ configLabel labelsPage2[] PROGMEM = {
 };
 
 configLabel labelsPage3[] PROGMEM = {
-  { 8 + 30*1, configMsg30 },
+  { 5 + 30*1, configMsg30 },
   { 3 + 30*3, configMsg31 },
   { 3 + 30*4, configMsg32 },
   { 3 + 30*5, configMsg33 },
@@ -1038,7 +1038,7 @@ configLabel labelsPage3[] PROGMEM = {
 };
 
 configLabel labelsPage4[] PROGMEM = {
-  { 8 + 30*1, configMsg40 },
+  { 9 + 30*1, configMsg40 },
   { 3 + 30*3, configMsg41 },
   { 3 + 30*4, configMsg42 },
   { 3 + 30*5, configMsg43 },
@@ -1047,7 +1047,7 @@ configLabel labelsPage4[] PROGMEM = {
 };
 
 configLabel labelsPage5[] PROGMEM = {
-  { 8 + 30*1, configMsg50 },
+  { 7 + 30*1, configMsg50 },
   { 3 + 30*3, configMsg51 },
   { 3 + 30*4, configMsg52 },
   { 3 + 30*5, configMsg53 },
@@ -1058,7 +1058,7 @@ configLabel labelsPage5[] PROGMEM = {
 };
 
 configLabel labelsPage6[] PROGMEM = {
-  { 8 + 30*1, configMsg60 },
+  { 9 + 30*1, configMsg60 },
   { 3 + 30*3, configMsg61 },
   { 3 + 30*4, configMsg62 },
   { 3 + 30*5, configMsg63 },
@@ -1069,7 +1069,7 @@ configLabel labelsPage6[] PROGMEM = {
 };
 
 configLabel labelsPage7[] PROGMEM = {
-  { 8 + 30*1, configMsg70 },
+  { 9 + 30*1, configMsg70 },
   { 3 + 30*3, configMsg71 },
   { 3 + 30*4, configMsg72 },
   { 3 + 30*5, configMsg73 },
@@ -1092,6 +1092,8 @@ configLabel labelsPage9[] PROGMEM = {
   { 8 + 30*1, configMsg90 },
   { 3 + 30*3, configMsg91 }
 };
+
+// input fields data for the config screens
 
 configInput inputsPage1[] PROGMEM = {
   { 11 + 30*3, &P8[0] },
@@ -1116,39 +1118,86 @@ configInput inputsPage1[] PROGMEM = {
 };
 
 configInput inputsPage2[] PROGMEM = {
+  { 23 + 30*3, &rcRate8 },
+  { 23 + 30*4, &rcExpo8 },
+  { 23 + 30*5, &rollPitchRate },
+  { 23 + 30*6, &yawRate },
+  { 23 + 30*7, &dynThrPID },
+  { 23 + 30*8, &cycleTime, &onchangeWord },
+  { 23 + 30*9, &I2CError, &onchangeWord }
 };
 
 configInput inputsPage3[] PROGMEM = {
+  { 23 + 30*3, &Settings[S_DISPLAYVOLTAGE], &onchangeBoolean },
+  { 23 + 30*4, &Settings[S_VOLTAGEMIN] },
+  { 23 + 30*5, &Settings[S_VIDVOLTAGE], &onchangeBoolean },
+  { 23 + 30*6, &Settings[S_DISPLAYTEMPERATURE], &onchangeBoolean },
+  { 23 + 30*7, &Settings[S_TEMPERATUREMAX] },
+  { 23 + 30*8, &Settings[S_AMPER_HOUR], &onchangeBoolean },
+  { 23 + 30*9, &Settings[S_AMPERAGE], &onchangeBoolean }
 };
 
 configInput inputsPage4[] PROGMEM = {
+  { 23 + 30*3, &rssiADC },
+  { 23 + 30*4, &rssi },
+  { 18 + 30*5, &rssiTimer }, // special input - not selectable, maybe make it a label?
+  { 23 + 30*5, &Settings[S_RSSIMIN] },
+  { 23 + 30*6, &Settings[S_RSSIMAX] },
+  { 23 + 30*7, &Settings[S_DISPLAYRSSI], &onchangeBoolean }
 };
 
 configInput inputsPage5[] PROGMEM = {
+  { 23 + 30*3, &accCalibrationTimer }, // print byte or "-" if zero
+  { 23 + 30*4, &MwAccSmooth[0] },
+  { 23 + 30*5, &MwAccSmooth[1] },
+  { 23 + 30*6, &MwAccSmooth[2] },
+  { 23 + 30*7, &magCalibrationTimer }, // print byte or "-" if zero
+  { 23 + 30*8, &MwHeading },
+  { 23 + 30*9, &eepromWriteTimer }     // print byte or "-" if zero
 };
 
 configInput inputsPage6[] PROGMEM = {
+  { 23 + 30*3, &Settings[S_DISPLAYGPS], &onchangeBoolean },
+  { 23 + 30*4, &Settings[S_COORDINATES], &onchangeBoolean },
+  { 23 + 30*5, &Settings[S_GPSCOORDTOP], &onchangeBoolean },
+  { 23 + 30*6, &Settings[S_GPSALTITUDE], &onchangeBoolean },
+  { 23 + 30*7, &Settings[S_ANGLETOHOME], &onchangeBoolean },
+  { 23 + 30*8, &Settings[S_SHOWHEADING], &onchangeBoolean },
+  { 23 + 30*9, &Settings[S_MODEICON], &onchangeBoolean }
 };
 
 configInput inputsPage7[] PROGMEM = {
+  { 23 + 30*3, &Settings[S_DISPLAY_CS] },
+  { 23 + 30*4, &Settings[S_THROTTLEPOSITION] },
+  { 23 + 30*5, &Settings[S_WITHDECORATION], &onchangeBoolean },
+  { 21 + 30*6, &Settings[S_UNITSYSTEM], &onchangeUnitType },
+  { 23 + 30*7, &Settings[S_VIDEOSIGNALTYPE], &onchangeVidType }
 };
 
 configInput inputsPage8[] PROGMEM = {
+  { 20 + 30*3, &trip },
+  { 20 + 30*4, &distanceMAX },
+  { 20 + 30*5, &altitudeMAX },
+  { 20 + 30*6, &speedMAX },
+  { 19 + 30*7, &flyingTime }, // formatTime(flyingTime, buf, 1)
+  { 20 + 30*8, &pMeterSum, &onchangeWord }, // calc pMeterSum / EST_PMSum
+  { 20 + 30*9, &temperMAX }
 };
 
 configInput inputsPage9[] PROGMEM = {
+  { 23 + 30*3, &ConfigCurrentSet }
 };
 
 configScreen configScreens[] = {
   { 9, 19, labelsPage1, inputsPage1 },
-  { 8, 0, labelsPage2, inputsPage2 },
-  { 8, 0, labelsPage3, inputsPage3 },
-  { 6, 0, labelsPage4, inputsPage4 },
-  { 8, 0, labelsPage5, inputsPage5 },
-  { 8, 0, labelsPage6, inputsPage6 },
-  { 6, 0, labelsPage7, inputsPage7 },
-  { 8, 0, labelsPage8, inputsPage8 },
-  { 2, 0, labelsPage9, inputsPage9 }
+  { 8, 7, labelsPage2, inputsPage2 },
+  { 8, 7, labelsPage3, inputsPage3 },
+  { 6, 6, labelsPage4, inputsPage4 },
+  { 8, 7, labelsPage5, inputsPage5 },
+  { 8, 7, labelsPage6, inputsPage6 },
+  { 6, 5, labelsPage7, inputsPage7 },
+  { 8, 7, labelsPage8, inputsPage8 },
+  { 2, 1, labelsPage9, inputsPage9 }
 };
 
 // input update/display callbacks
