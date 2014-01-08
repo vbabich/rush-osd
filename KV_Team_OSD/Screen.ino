@@ -1138,11 +1138,11 @@ configInput inputsPage3[] PROGMEM = {
 };
 
 configInput inputsPage4[] PROGMEM = {
-  { 23 + 30*3, &rssiADC, &callbackWord },
-  { 23 + 30*4, &rssi, &callbackWord },  // should be a byte?
-  { 18 + 30*5, &rssiTimer }, // special input - not selectable, maybe make it a label?
-  { 23 + 30*5, &Settings[S_RSSIMIN] },
-  { 23 + 30*6, &Settings[S_RSSIMAX] },
+  { 23 + 30*3, &rssiADC, &callbackWordRO },
+  { 23 + 30*4, &rssi, &callbackWordRO },  // should be a byte?
+  { 18 + 30*5, &rssiTimer, &callbackByteRO }, // special input - not selectable, maybe make it a label?
+  { 23 + 30*5, &Settings[S_RSSIMIN], &callbackRSSIMIN }, // start countdown, set RSSIMIN, ignore delta
+  { 23 + 30*6, &Settings[S_RSSIMAX], &callbackRSSIMAX }, // set RSSIMAX, ignore delta
   { 23 + 30*7, &Settings[S_DISPLAYRSSI], &callbackBoolean }
 };
 
@@ -1174,7 +1174,7 @@ configInput inputsPage7[] PROGMEM = {
   { 23 + 30*7, &Settings[S_VIDEOSIGNALTYPE], &callbackVidType }
 };
 
-configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..  convert to labels maybe?
+configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..  convert to labels maybe? the problem is the labels are all in PROGMEM
   { 20 + 30*3, &trip, &callbackWordRO }, // trip is float, original code is printing it with itoa TODO: check how it works.. 
   { 20 + 30*4, &distanceMAX, &callbackWordRO },
   { 20 + 30*5, &altitudeMAX, &callbackWordRO },
@@ -1282,7 +1282,20 @@ char *callbackPMeterRO( void *v, char *b, int8_t delta ) {
   return itoa( p, b, 10 );
 }
 
+char *callbackRSSIMIN( void *v, char *b, int8_t delta ) {
+  // if countdown == 0 start countdown for RSSIMIN
+  
+  // print RSSIMIN
+  return itoa( *(int8_t *)v , b, 10 );
+}
 
+
+char *callbackRSSIMAX( void *v, char *b, int8_t delta ) {
+  // set RSSIMAX
+  *(int8_t *)v = 123; // calc current RSSI
+  // print RSSIMAX
+  return itoa( *(int8_t *)v , b, 10 );
+}
 
 // Display cursor for current input
 
