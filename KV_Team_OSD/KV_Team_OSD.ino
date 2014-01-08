@@ -46,6 +46,7 @@ July  2013  r370
 #include "symbols.h"
 #include "Config.h"
 #include "GlobalVariables.h"
+#include <MemoryFree.h>
 
 // Screen is the Screen buffer between program an MAX7456 that will be writen to the screen at 10hz
 char screen[480];
@@ -80,6 +81,9 @@ void setup()
   
   //Led output
   pinMode(7,OUTPUT);
+
+  //debug
+  //pinMode(3, OUTPUT);
  
   checkEEPROM();
   readEEPROM();
@@ -249,7 +253,10 @@ void loop()
       if(!fontMode)
       blankserialRequest(MSPcmdsend);      
 
+    //digitalWrite(3, HIGH);
     MAX7456_DrawScreen();
+    //digitalWrite(3, LOW);
+    
     if( allSec < INTRO_DELAY ){
       displayIntro();
       lastCallSign = onTime;
@@ -337,6 +344,8 @@ void loop()
 
   if(tenthSec >= 20)     // this execute 1 time a second
   {
+    //currentInput++;      // loop through the inputs on the config screen
+    
     onTime++;
 
     // XXX
