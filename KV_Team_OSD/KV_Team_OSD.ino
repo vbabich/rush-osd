@@ -344,7 +344,14 @@ void loop()
 
   if(tenthSec >= 20)     // this execute 1 time a second
   {
-    //currentInput++;      // loop through the inputs on the config screen
+    // debug - loop through the inputs on the config screen
+    // currentInput++;
+    
+    // debug - loop through the config screens
+    configPage++;
+    if( configPage > MAXPAGE ) {
+      configPage = MINPAGE;
+    }
     
     onTime++;
 

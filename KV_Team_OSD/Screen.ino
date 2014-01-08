@@ -1015,6 +1015,84 @@ configLabel labelsPage1[] PROGMEM = {
   { 3 + 30*9, configMsg17 }
 };
 
+configLabel labelsPage2[] PROGMEM = {
+  { 8 + 30*1, configMsg20 },
+  { 3 + 30*3, configMsg21 },
+  { 3 + 30*4, configMsg22 },
+  { 3 + 30*5, configMsg23 },
+  { 3 + 30*6, configMsg24 },
+  { 3 + 30*7, configMsg25 },
+  { 3 + 30*8, configMsg26 },
+  { 3 + 30*9, configMsg27 }
+};
+
+configLabel labelsPage3[] PROGMEM = {
+  { 8 + 30*1, configMsg30 },
+  { 3 + 30*3, configMsg31 },
+  { 3 + 30*4, configMsg32 },
+  { 3 + 30*5, configMsg33 },
+  { 3 + 30*6, configMsg34 },
+  { 3 + 30*7, configMsg35 },
+  { 3 + 30*8, configMsg36 },
+  { 3 + 30*9, configMsg37 }
+};
+
+configLabel labelsPage4[] PROGMEM = {
+  { 8 + 30*1, configMsg40 },
+  { 3 + 30*3, configMsg41 },
+  { 3 + 30*4, configMsg42 },
+  { 3 + 30*5, configMsg43 },
+  { 3 + 30*6, configMsg44 },
+  { 3 + 30*7, configMsg45 }
+};
+
+configLabel labelsPage5[] PROGMEM = {
+  { 8 + 30*1, configMsg50 },
+  { 3 + 30*3, configMsg51 },
+  { 3 + 30*4, configMsg52 },
+  { 3 + 30*5, configMsg53 },
+  { 3 + 30*6, configMsg54 },
+  { 3 + 30*7, configMsg55 },
+  { 3 + 30*8, configMsg56 },
+  { 3 + 30*9, configMsg57 }
+};
+
+configLabel labelsPage6[] PROGMEM = {
+  { 8 + 30*1, configMsg60 },
+  { 3 + 30*3, configMsg61 },
+  { 3 + 30*4, configMsg62 },
+  { 3 + 30*5, configMsg63 },
+  { 3 + 30*6, configMsg64 },
+  { 3 + 30*7, configMsg65 },
+  { 3 + 30*8, configMsg66 },
+  { 3 + 30*9, configMsg67 }
+};
+
+configLabel labelsPage7[] PROGMEM = {
+  { 8 + 30*1, configMsg70 },
+  { 3 + 30*3, configMsg71 },
+  { 3 + 30*4, configMsg72 },
+  { 3 + 30*5, configMsg73 },
+  { 3 + 30*6, configMsg74 },
+  { 3 + 30*7, configMsg77 }
+};
+
+configLabel labelsPage8[] PROGMEM = {
+  { 8 + 30*1, configMsg80 },
+  { 3 + 30*3, configMsg81 },
+  { 3 + 30*4, configMsg82 },
+  { 3 + 30*5, configMsg83 },
+  { 3 + 30*6, configMsg84 },
+  { 3 + 30*7, configMsg85 },
+  { 3 + 30*8, configMsg86 },
+  { 3 + 30*9, configMsg87 }
+};
+
+configLabel labelsPage9[] PROGMEM = {
+  { 8 + 30*1, configMsg90 },
+  { 3 + 30*3, configMsg91 }
+};
+
 configInput inputsPage1[] PROGMEM = {
   { 11 + 30*3, &P8[0] },
   { 17 + 30*3, &I8[0] },
@@ -1037,21 +1115,60 @@ configInput inputsPage1[] PROGMEM = {
   { 11 + 30*9, &P8[0] }
 };
 
+configInput inputsPage2[] PROGMEM = {
+};
+
+configInput inputsPage3[] PROGMEM = {
+};
+
+configInput inputsPage4[] PROGMEM = {
+};
+
+configInput inputsPage5[] PROGMEM = {
+};
+
+configInput inputsPage6[] PROGMEM = {
+};
+
+configInput inputsPage7[] PROGMEM = {
+};
+
+configInput inputsPage8[] PROGMEM = {
+};
+
+configInput inputsPage9[] PROGMEM = {
+};
+
 configScreen configScreens[] = {
-  { 9, 19, labelsPage1, inputsPage1 }
+  { 9, 19, labelsPage1, inputsPage1 },
+  { 8, 0, labelsPage2, inputsPage2 },
+  { 8, 0, labelsPage3, inputsPage3 },
+  { 6, 0, labelsPage4, inputsPage4 },
+  { 8, 0, labelsPage5, inputsPage5 },
+  { 8, 0, labelsPage6, inputsPage6 },
+  { 6, 0, labelsPage7, inputsPage7 },
+  { 8, 0, labelsPage8, inputsPage8 },
+  { 2, 0, labelsPage9, inputsPage9 }
 };
 
 // input update/display callbacks
 
 char *onchangeByte( void *v, char *b, int8_t delta ) {
-  *(int8_t *)v += delta;
-  return itoa( *(int8_t *)v, b, 10 );
+  *(uint8_t *)v += delta;
+  return itoa( *(uint8_t *)v, b, 10 );
+}
+
+char *onchangeWord( void *v, char *b, int8_t delta ) {
+  *(int16_t *)v += delta;
+  return itoa( *(int16_t *)v, b, 10 );
 }
 
 char *onchangeBoolean( void *v, char *b, int8_t delta ) {
   char *msg;
+  boolean x = *(boolean *)v;
+  
   if( delta != 0 ) {
-    *(boolean *)v = !*(boolean *)v;
+    *(boolean *)v = !x;
   }
   
   if( *(boolean *)v ) {
@@ -1059,6 +1176,42 @@ char *onchangeBoolean( void *v, char *b, int8_t delta ) {
   }
   else {
     msg = (char *)configMsgOFF;
+  }
+  
+  return strcpy_P( b, msg );
+}
+
+char *onchangeVidType( void *v, char *b, int8_t delta ) {
+  char *msg;
+  boolean x = *(boolean *)v;
+  
+  if( delta != 0 ) {
+    *(boolean *)v = !x;
+  }
+  
+  if( *(boolean *)v ) {
+    msg = (char *)configMsg79; // 1 - PAL
+  }
+  else {
+    msg = (char *)configMsg78; // 0 - NTSC
+  }
+  
+  return strcpy_P( b, msg );
+}
+
+char *onchangeUnitType( void *v, char *b, int8_t delta ) {
+  char *msg;
+  boolean x = *(boolean *)v;
+  
+  if( delta != 0 ) {
+    *(boolean *)v = !x;
+  }
+  
+  if( *(boolean *)v ) {
+    msg = (char *)configMsg76; // 1 - Imperial
+  }
+  else {
+    msg = (char *)configMsg75; // 0 - Metric
   }
   
   return strcpy_P( b, msg );
