@@ -26,6 +26,9 @@ uint8_t eepromWriteTimer=0;
 unsigned int allSec=0;
 
 // Config status and cursor location
+uint8_t currentInput=0;
+int8_t  currentDelta=0;
+
 uint8_t ROW=10;
 uint8_t COL=3;
 uint8_t configPage=MINPAGE;
@@ -338,6 +341,7 @@ const char configMsg14[] PROGMEM = "ALT";
 const char configMsg15[] PROGMEM = "GPS";
 const char configMsg16[] PROGMEM = "LEVEL";
 const char configMsg17[] PROGMEM = "MAG";
+const char configMsgPID[] PROGMEM = "P     I     D";
 //-----------------------------------------------------------Page2
 const char configMsg20[] PROGMEM = "2/9 RC TUNING";
 const char configMsg21[] PROGMEM = "RC RATE";

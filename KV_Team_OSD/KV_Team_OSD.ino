@@ -322,6 +322,10 @@ void loop()
           displayGPS_speed();
           displayGPSPosition();
         }
+        
+        // tmp
+        displayConfigScreen();
+        
       }
     }
   }  // End of fast Timed Service Routine (50ms loop)

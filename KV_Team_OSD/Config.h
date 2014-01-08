@@ -65,8 +65,8 @@
 #define LINE16    450
 
 // DEFINE CONFIGURATION MENU PAGES
-#define MINPAGE 1
-#define MAXPAGE 9
+#define MINPAGE 0
+#define MAXPAGE 8
 
 #define PIDITEMS 10
 

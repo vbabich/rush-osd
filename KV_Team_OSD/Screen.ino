@@ -574,7 +574,7 @@ void displayDirectionToHome(void)
   screenBuffer[1] = 0;
   MAX7456_WriteString(screenBuffer,getPosition(GPS_directionToHomePosition));
 }
-
+/*
 void displayCursor(void)
 {
   int cursorpos;
@@ -975,3 +975,110 @@ void displayConfigScreen(void)
     
   displayCursor();
 }
+*/
+
+
+/* Config screen data */
+
+/* handler function type */
+
+typedef void *(*onchange_ptr)(void *v, char *b, int8_t delta);
+
+struct configLabel {
+  uint16_t pos;
+  const char *txt;
+};
+
+struct configInput {
+  uint16_t pos;
+  void *v;
+  onchange_ptr onchange;
+};
+
+struct configScreen {
+  uint8_t labelsNum;
+  uint8_t inputsNum;
+  configLabel *labels;
+  configInput *inputs;
+};
+
+
+configLabel labelsPage1[] PROGMEM = {
+  { 8 + 30*1, configMsg10 },
+  { 11 + 30*2, configMsgPID },
+  { 3 + 30*3, configMsg11 },
+  { 3 + 30*4, configMsg12 },
+  { 3 + 30*5, configMsg13 },
+  { 3 + 30*6, configMsg14 },
+  { 3 + 30*7, configMsg15 },
+  { 3 + 30*8, configMsg16 },
+  { 3 + 30*9, configMsg17 }
+};
+
+configInput inputsPage1[] PROGMEM = {
+  { 11 + 30*3, &P8[0] },
+  { 17 + 30*3, &I8[0] },
+  { 23 + 30*3, &D8[0] },
+  { 11 + 30*4, &P8[1] },
+  { 17 + 30*4, &I8[1] },
+  { 23 + 30*4, &D8[1] },
+  { 11 + 30*5, &P8[2] },
+  { 17 + 30*5, &I8[2] },
+  { 23 + 30*5, &D8[2] },
+  { 11 + 30*6, &P8[3] },
+  { 17 + 30*6, &I8[3] },
+  { 23 + 30*6, &D8[3] },
+  { 11 + 30*7, &P8[4] },
+  { 17 + 30*7, &I8[4] },
+  { 23 + 30*7, &D8[4] },
+  { 11 + 30*8, &P8[7] },
+  { 17 + 30*8, &I8[7] },
+  { 23 + 30*8, &D8[7] },
+  { 11 + 30*9, &P8[0] }
+};
+
+configScreen configScreens[] = {
+  { 9, 19, labelsPage1, inputsPage1 }
+};
+
+void displayCursor( void ) {
+
+}
+
+void displayConfigScreen( void ) {
+  uint8_t i;
+  
+  int8_t delta;
+  
+  uint16_t pos;
+  onchange_ptr onchange;
+  void *v;
+  
+  
+  // display labels for current config page
+  
+  for( i = 0; i < configScreens[configPage].labelsNum; i++ ) {
+    strcpy_P( screen + pgm_read_word( &(configScreens[configPage].labels[i].pos) ), (char *)pgm_read_word( &(configScreens[configPage].labels[i].txt) ) );
+  }
+  
+  // display inputs for current config page
+  for( i = 0; i < configScreens[configPage].inputsNum; i++ ) {
+    
+    onchange = ( onchange_ptr )pgm_read_word( &(configScreens[configPage].inputs[i].onchange) );
+    
+    // call onchange with delta
+    if( currentInput == i ) {
+      delta = currentDelta;
+    }
+    else {
+      delta = 0;
+    }
+    
+    //onchange( screen + pos, delta );
+    
+    itoa( *(int8_t *)pgm_read_word( &(configScreens[configPage].inputs[i].v) ), screen + pgm_read_word( &(configScreens[configPage].inputs[i].pos) ), 10 );
+  }
+  
+  displayCursor();
+}
+
