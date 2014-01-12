@@ -372,11 +372,11 @@ void handleRawRC() {
 	  ROW=10;
         */
       }
-      else if(!previousarmedstatus&&configMode&&(MwRcData[YAWSTICK]<MINSTICK)) { // DECREASE
+      else if(!previousarmedstatus&&configMode&&(MwRcData[ROLLSTICK]<MINSTICK)) { // DECREASE
         waitStick = 1;
         currentDelta = -1; // TODO: delta proportional to stick value
       }
-      else if(!previousarmedstatus&&configMode&&(MwRcData[YAWSTICK]>MAXSTICK)) { // INCREASE
+      else if(!previousarmedstatus&&configMode&&(MwRcData[ROLLSTICK]>MAXSTICK)) { // INCREASE
         waitStick = 1;
         currentDelta = 1; // TODO: delta proportional to stick value
       }
