@@ -29,9 +29,43 @@ char *ItoaPadded(int val, char *str, uint8_t bytes, uint8_t decimalpos)  {
 char *strcpy_P_NNT(char *dest, const char *src) { // strcpy_P no null termination, will not add 0 to the destination buffer
   uint8_t i;
   uint8_t x;
+  
   for( i = 0; ( x = pgm_read_byte( &src[i] ) ) != 0; i++ ) {
     dest[i] = x;
   }
+  
+  return dest; // returning non-null terminated addresses is pretty much useless, but whatever
+}
+
+char *itoa_NNT( int16_t num, char *dest) { // 10-base non-null-terminated itoa implementation, basically inventing a bicycle
+  uint8_t i = 0;
+  uint8_t x;
+  int16_t div = 10000; // int16_t is no more than 5 digits
+  uint8_t ascii0 = (uint8_t)'0';
+  
+  if ( num < 0 ) {
+    num = -num;
+    dest[i++] = '-';
+  }
+  
+  if ( num == 0 ) {
+    dest[i++] = '0';
+  }
+  else {
+    while ( num / div == 0 ) {
+      div = div / 10;
+    }
+    
+    while ( div > 1 ) {
+      x = num / div;
+      num = num % div;
+      dest[i++] = x + ascii0;
+      div = div / 10;
+    }
+    
+    dest[i++] = num + ascii0; // last char, avoiding unnecessary divisions
+  }
+  return dest; // returning non-null terminated addresses is pretty much useless, but whatever
 }
 
 char *FormatGPSCoord(int32_t val, char *str, uint8_t p, char pos, char neg) {
@@ -1126,7 +1160,7 @@ configInput inputsPage1[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage2[] PROGMEM = {
@@ -1140,7 +1174,7 @@ configInput inputsPage2[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage3[] PROGMEM = {
@@ -1154,7 +1188,7 @@ configInput inputsPage3[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage4[] PROGMEM = {
@@ -1167,7 +1201,7 @@ configInput inputsPage4[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage5[] PROGMEM = {
@@ -1181,7 +1215,7 @@ configInput inputsPage5[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage6[] PROGMEM = {
@@ -1195,7 +1229,7 @@ configInput inputsPage6[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage7[] PROGMEM = {
@@ -1207,7 +1241,7 @@ configInput inputsPage7[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..  convert to labels maybe? the problem is the labels are all in PROGMEM
@@ -1221,7 +1255,7 @@ configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage9[] PROGMEM = {
@@ -1229,7 +1263,7 @@ configInput inputsPage9[] PROGMEM = {
   
   { 3 + 30*11, NULL, &callbackExit },
   { 9 + 30*11, NULL, &callbackSaveExit },
-  { 21 + 30*11, NULL, &callbackPage }
+  { 20 + 30*11, NULL, &callbackPage }
 };
 
 configScreen configScreens[] = {
@@ -1248,20 +1282,20 @@ configScreen configScreens[] = {
 
 char *callbackByte( void *v, char *b, int8_t delta ) {
   *(uint8_t *)v += delta;
-  return itoa( *(uint8_t *)v, b, 10 );
+  return itoa_NNT( *(uint8_t *)v, b );
 }
 
 char *callbackWord( void *v, char *b, int8_t delta ) {
   *(int16_t *)v += delta;
-  return itoa( *(int16_t *)v, b, 10 );
+  return itoa_NNT( *(int16_t *)v, b );
 }
 
 char *callbackByteRO( void *v, char *b, int8_t delta ) { // read only input - ignore delta
-  return itoa( *(uint8_t *)v, b, 10 );
+  return itoa_NNT( *(uint8_t *)v, b );
 }
 
 char *callbackWordRO( void *v, char *b, int8_t delta ) { // read only input - ignore delta
-  return itoa( *(int16_t *)v, b, 10 );
+  return itoa_NNT( *(int16_t *)v, b );
 }
 
 char *callbackBoolean( void *v, char *b, int8_t delta ) {
@@ -1323,14 +1357,14 @@ char *callbackPMeterRO( void *v, char *b, int8_t delta ) {
   
   // calc p (pMeterSum / EST_PMSum) ;
   
-  return itoa( p, b, 10 );
+  return itoa_NNT( p, b );
 }
 
 char *callbackRSSIMIN( void *v, char *b, int8_t delta ) {
   // if countdown == 0 start countdown for RSSIMIN
   
   // print RSSIMIN
-  return itoa( *(int8_t *)v , b, 10 );
+  return itoa_NNT( *(int8_t *)v , b );
 }
 
 
@@ -1338,7 +1372,7 @@ char *callbackRSSIMAX( void *v, char *b, int8_t delta ) {
   // set RSSIMAX
   *(int8_t *)v = 123; // calc current RSSI
   // print RSSIMAX
-  return itoa( *(int8_t *)v , b, 10 );
+  return itoa_NNT( *(int8_t *)v , b );
 }
 
 char *callbackExit( void *v, char *b, int8_t delta ) {
@@ -1383,7 +1417,7 @@ char *callbackPage( void *v, char *b, int8_t delta ) {
   }
   
   return strcpy_P_NNT( b, configMsgPGS ); // PAGE msg
-  //return itoa( configPage, b, 10 ); // PAGE num
+  //return itoa_NNT( configPage, b, 10 ); // PAGE num
 }
 
 // Display cursor for current input
@@ -1422,7 +1456,6 @@ void cursorMoveUp() {
   
   while ( i > 0 ) {
     i--;
-    P8[0] = i;
     if ( editable ) {
       currentInput = i;
       break;
@@ -1438,7 +1471,6 @@ void cursorMoveDown() {
   
   while ( i < lastInput ) {
     i++;
-    P8[0] = i;
     if ( editable ) {
       currentInput = i;
       break;
@@ -1457,11 +1489,6 @@ void displayConfigScreen( void ) {
   
   uint8_t cPage = configPage;
   uint8_t cInput = currentInput;
-  
-
-  P8[1] = currentInput;
-  P8[2] = configScreens[cPage].inputsNum - 1;
-
   
   // display labels for current config page
   
