@@ -640,7 +640,7 @@ void configExit()
   setMspRequests();
 }
 
-void saveExit()
+void configSaveExit()
 {
   uint8_t txCheckSum;
   uint8_t txSize;

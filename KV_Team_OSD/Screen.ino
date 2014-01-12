@@ -1117,7 +1117,8 @@ configInput inputsPage1[] PROGMEM = {
   { 11 + 30*9, &P8[8] },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage2[] PROGMEM = {
@@ -1130,7 +1131,8 @@ configInput inputsPage2[] PROGMEM = {
   { 23 + 30*9, &I2CError, &callbackWord },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage3[] PROGMEM = {
@@ -1143,7 +1145,8 @@ configInput inputsPage3[] PROGMEM = {
   { 23 + 30*9, &Settings[S_AMPERAGE], &callbackBoolean },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage4[] PROGMEM = {
@@ -1155,7 +1158,8 @@ configInput inputsPage4[] PROGMEM = {
   { 23 + 30*7, &Settings[S_DISPLAYRSSI], &callbackBoolean },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage5[] PROGMEM = {
@@ -1168,7 +1172,8 @@ configInput inputsPage5[] PROGMEM = {
   { 23 + 30*9, &eepromWriteTimer },     // print byte or "-" if zero
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage6[] PROGMEM = {
@@ -1181,7 +1186,8 @@ configInput inputsPage6[] PROGMEM = {
   { 23 + 30*9, &Settings[S_MODEICON], &callbackBoolean },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage7[] PROGMEM = {
@@ -1192,7 +1198,8 @@ configInput inputsPage7[] PROGMEM = {
   { 23 + 30*7, &Settings[S_VIDEOSIGNALTYPE], &callbackVidType },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..  convert to labels maybe? the problem is the labels are all in PROGMEM
@@ -1205,26 +1212,28 @@ configInput inputsPage8[] PROGMEM = { // read-only page, non-selectable inputs..
   { 20 + 30*9, &temperMAX, &callbackByteRO },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configInput inputsPage9[] PROGMEM = {
   { 23 + 30*3, &ConfigCurrentSet },
   
   { 3 + 30*11, NULL, &callbackExit },
-  { 17 + 30*11, &configPage, &callbackPage }
+  { 9 + 30*11, NULL, &callbackSaveExit },
+  { 21 + 30*11, NULL, &callbackPage }
 };
 
 configScreen configScreens[] = {
-  { 9, 21, labelsPage1, inputsPage1 },
-  { 8, 9, labelsPage2, inputsPage2 },
-  { 8, 9, labelsPage3, inputsPage3 },
-  { 6, 8, labelsPage4, inputsPage4 },
-  { 8, 9, labelsPage5, inputsPage5 },
-  { 8, 9, labelsPage6, inputsPage6 },
-  { 6, 7, labelsPage7, inputsPage7 },
-  { 8, 9, labelsPage8, inputsPage8 },
-  { 2, 3, labelsPage9, inputsPage9 }
+  { 9, 22, labelsPage1, inputsPage1 },
+  { 8, 10, labelsPage2, inputsPage2 },
+  { 8, 10, labelsPage3, inputsPage3 },
+  { 6, 9, labelsPage4, inputsPage4 },
+  { 8, 10, labelsPage5, inputsPage5 },
+  { 8, 10, labelsPage6, inputsPage6 },
+  { 6, 8, labelsPage7, inputsPage7 },
+  { 8, 10, labelsPage8, inputsPage8 },
+  { 2, 4, labelsPage9, inputsPage9 }
 };
 
 // input update/display callbacks
@@ -1327,9 +1336,16 @@ char *callbackRSSIMAX( void *v, char *b, int8_t delta ) {
 char *callbackExit( void *v, char *b, int8_t delta ) {
   if( delta != 0 ) {
     configExit();
+  }  
+  return strcpy_P( b, configMsgEXT ); // EXIT msg
+}
+
+char *callbackSaveExit( void *v, char *b, int8_t delta ) {
+  if( delta != 0 ) {
+    configSaveExit();
   }
   
-  return strcpy_P( b, configMsgEXT ); // EXIT msg
+  return strcpy_P( b, configMsgSAVE ); // Save&Exit msg
 }
 
 char *callbackPage( void *v, char *b, int8_t delta ) {
@@ -1340,28 +1356,26 @@ char *callbackPage( void *v, char *b, int8_t delta ) {
   // TODO: clean up this mess
   
   if ( delta <= -1 ) {
-    if ( page > MINPAGE ) {
-      page--;
+    if ( configPage > MINPAGE ) {
+      configPage--;
     }
     else {
-      page = MAXPAGE;
+      configPage = MAXPAGE;
     }
-    currentInput = configScreens[page].inputsNum - 1; // set cursor to the last input (PAGE)
-    *(uint8_t *)v = page; // update page var
+    currentInput = configScreens[configPage].inputsNum - 1; // set cursor to the last input (PAGE), only when delta !=0
   }
   else if ( delta >= 1 ) {
-    if ( page < MAXPAGE ) {
-      page++;
+    if ( configPage < MAXPAGE ) {
+      configPage++;
     }
     else {
-      page = MINPAGE;
+      configPage = MINPAGE;
     }
-    currentInput = configScreens[page].inputsNum - 1; // set cursor to the last input (PAGE)
-    *(uint8_t *)v = page; // update page var
+    currentInput = configScreens[configPage].inputsNum - 1;  // set cursor to the last input (PAGE), only when delta !=0
   }
-
-  //return strcpy_P( b, configMsgPGS ); // PAGE msg
-  return itoa( page, b, 10 ); // PAGE num
+  
+  return strcpy_P( b, configMsgPGS ); // PAGE msg
+  //return itoa( configPage, b, 10 ); // PAGE num
 }
 
 // Display cursor for current input
@@ -1400,6 +1414,7 @@ void cursorMoveUp() {
   
   while ( i > 0 ) {
     i--;
+    P8[0] = i;
     if ( editable ) {
       currentInput = i;
       break;
@@ -1410,11 +1425,12 @@ void cursorMoveUp() {
 void cursorMoveDown() {
   uint8_t i = currentInput;
   uint8_t lastInput = configScreens[configPage].inputsNum - 1;
-  
+
   boolean editable = true; // need to store this in array for each input  .inputs[i].editable smth like that
   
   while ( i < lastInput ) {
     i++;
+    P8[0] = i;
     if ( editable ) {
       currentInput = i;
       break;
@@ -1431,22 +1447,29 @@ void displayConfigScreen( void ) {
   callback_ptr callback;
   void *v;
   
+  uint8_t cPage = configPage;
+  uint8_t cInput = currentInput;
+  
+
+  P8[1] = currentInput;
+  P8[2] = configScreens[cPage].inputsNum - 1;
+
   
   // display labels for current config page
   
-  for( i = 0; i < configScreens[configPage].labelsNum; i++ ) {
-    strcpy_P( screen + pgm_read_word( &(configScreens[configPage].labels[i].pos) ), (char *)pgm_read_word( &(configScreens[configPage].labels[i].txt) ) );
+  for( i = 0; i < configScreens[cPage].labelsNum; i++ ) {
+    strcpy_P( screen + pgm_read_word( &(configScreens[cPage].labels[i].pos) ), (char *)pgm_read_word( &(configScreens[cPage].labels[i].txt) ) );
   }
   
   // display inputs for current config page
-  for( i = 0; i < configScreens[configPage].inputsNum; i++ ) {
+  for( i = 0; i < configScreens[cPage].inputsNum; i++ ) {
     
-    callback = ( callback_ptr )pgm_read_word( &(configScreens[configPage].inputs[i].callback) );
-    v = (void *)pgm_read_word( &(configScreens[configPage].inputs[i].v) );
-    pos = (uint16_t)pgm_read_word( &(configScreens[configPage].inputs[i].pos) );
+    callback = ( callback_ptr )pgm_read_word( &(configScreens[cPage].inputs[i].callback) );
+    v = (void *)pgm_read_word( &(configScreens[cPage].inputs[i].v) );
+    pos = (uint16_t)pgm_read_word( &(configScreens[cPage].inputs[i].pos) );
     
     // call callback with delta
-    if( currentInput == i ) {
+    if( cInput == i ) {
       delta = currentDelta;
     }
     else {
