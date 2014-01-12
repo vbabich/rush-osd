@@ -26,6 +26,14 @@ char *ItoaPadded(int val, char *str, uint8_t bytes, uint8_t decimalpos)  {
   return str;
 }
 
+char *strcpy_P_NNT(char *dest, const char *src) { // strcpy_P no null termination, will not add 0 to the destination buffer
+  uint8_t i;
+  uint8_t x;
+  for( i = 0; ( x = pgm_read_byte( &src[i] ) ) != 0; i++ ) {
+    dest[i] = x;
+  }
+}
+
 char *FormatGPSCoord(int32_t val, char *str, uint8_t p, char pos, char neg) {
   if(val < 0) {
     pos = neg;
@@ -1271,7 +1279,7 @@ char *callbackBoolean( void *v, char *b, int8_t delta ) {
     msg = (char *)configMsgOFF;
   }
   
-  return strcpy_P( b, msg );
+  return strcpy_P_NNT( b, msg );
 }
 
 char *callbackVidType( void *v, char *b, int8_t delta ) {
@@ -1289,7 +1297,7 @@ char *callbackVidType( void *v, char *b, int8_t delta ) {
     msg = (char *)configMsg78; // 0 - NTSC
   }
   
-  return strcpy_P( b, msg );
+  return strcpy_P_NNT( b, msg );
 }
 
 char *callbackUnitType( void *v, char *b, int8_t delta ) {
@@ -1307,7 +1315,7 @@ char *callbackUnitType( void *v, char *b, int8_t delta ) {
     msg = (char *)configMsg75; // 0 - Metric
   }
   
-  return strcpy_P( b, msg );
+  return strcpy_P_NNT( b, msg );
 }
 
 char *callbackPMeterRO( void *v, char *b, int8_t delta ) {
@@ -1337,7 +1345,7 @@ char *callbackExit( void *v, char *b, int8_t delta ) {
   if( delta != 0 ) {
     configExit();
   }  
-  return strcpy_P( b, configMsgEXT ); // EXIT msg
+  return strcpy_P_NNT( b, configMsgEXT ); // EXIT msg
 }
 
 char *callbackSaveExit( void *v, char *b, int8_t delta ) {
@@ -1345,7 +1353,7 @@ char *callbackSaveExit( void *v, char *b, int8_t delta ) {
     configSaveExit();
   }
   
-  return strcpy_P( b, configMsgSAVE ); // Save&Exit msg
+  return strcpy_P_NNT( b, configMsgSAVE ); // Save&Exit msg
 }
 
 char *callbackPage( void *v, char *b, int8_t delta ) {
@@ -1374,7 +1382,7 @@ char *callbackPage( void *v, char *b, int8_t delta ) {
     currentInput = configScreens[configPage].inputsNum - 1;  // set cursor to the last input (PAGE), only when delta !=0
   }
   
-  return strcpy_P( b, configMsgPGS ); // PAGE msg
+  return strcpy_P_NNT( b, configMsgPGS ); // PAGE msg
   //return itoa( configPage, b, 10 ); // PAGE num
 }
 
@@ -1458,7 +1466,7 @@ void displayConfigScreen( void ) {
   // display labels for current config page
   
   for( i = 0; i < configScreens[cPage].labelsNum; i++ ) {
-    strcpy_P( screen + pgm_read_word( &(configScreens[cPage].labels[i].pos) ), (char *)pgm_read_word( &(configScreens[cPage].labels[i].txt) ) );
+    strcpy_P_NNT( screen + pgm_read_word( &(configScreens[cPage].labels[i].pos) ), (char *)pgm_read_word( &(configScreens[cPage].labels[i].txt) ) );
   }
   
   // display inputs for current config page
